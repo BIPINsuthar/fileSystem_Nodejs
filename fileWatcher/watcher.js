@@ -24,46 +24,34 @@ const ADD_TO_FILE = "add to file";
 
   const deleteFile = async (path) => {
     try {
-      console.log("----", path);
-      const deleteFileHandle = await fs.open(path, "r");
-
-      if (deleteFileHandle) {
-        deleteFileHandle.close();
-        fs.unlink(path);
-        console.log("file was successfully deleted");
-      }
+      fs.unlink(path);
     } catch (error) {
-      console.log("file not found");
+      if (error.code == "ENOENT") {
+        console.log("file not found");
+      } else {
+        console.log(error);
+      }
     }
   };
 
   const renameFile = async (oldPath, newPath) => {
     try {
-      console.log("old path", oldPath);
-      const renameFileHandle = await fs.open(oldPath, "r");
-
-      if (renameFileHandle) {
-        renameFileHandle.close();
-
-        fs.rename(oldPath, newPath);
-
-        console.log("file was successfully renamed");
-      }
+      fs.rename(oldPath, newPath);
     } catch (error) {
-      console.log(error);
-      console.log("file not found");
+      if (error.code == "ENOENT") {
+        console.log("file not found");
+      } else {
+        console.log(error);
+      }
     }
   };
 
   const addToFile = async (path, content) => {
     try {
-      console.log("what is path", path);
       const fileHandler = await fs.open(path, "r");
 
       if (fileHandler) {
-        fileHandler.close();
-
-        fs.writeFile(path, content);
+        fileHandler.writeFile(path, content);
         console.log("content was successfully added");
       }
     } catch (error) {
@@ -139,7 +127,6 @@ const ADD_TO_FILE = "add to file";
         const _idx = command.indexOf(" to ");
         const oldFile = command.substring(RENAME_FILE.length + 1, _idx);
         const newFile = command.substring(_idx + 4);
-        console.log([oldFile, newFile]);
 
         renameFile(oldFile, newFile);
       }
