@@ -48,12 +48,16 @@ const ADD_TO_FILE = "add to file";
 
   const addToFile = async (path, content) => {
     try {
-      const fileHandler = await fs.open(path, "r");
+      const fileHandler = await fs.open(path, "w");
 
+      console.time("file");
       if (fileHandler) {
-        fileHandler.writeFile(path, content);
+        fileHandler.writeFile(content);
         console.log("content was successfully added");
       }
+
+      fileHandler.close();
+      console.timeEnd("file");
     } catch (error) {
       console.log("file not found");
     }
